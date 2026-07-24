@@ -1,36 +1,21 @@
 """
 checker.py
-تست زنده بودن سرورها (TCP) و امتیازدهی کیفیت بر اساس ویژگی‌های کانفیگ.
+امتیازدهی کیفیت کانفیگ‌ها بر اساس ویژگی‌های پروتکل (بدون تست اتصال).
 
-نسخه‌ی فعلی: تست TCP ساده (مرحله‌ی ۱). این فقط تضمین می‌کنه پورت بازه،
-نه اینکه پروتکل واقعاً کار می‌کنه یا کانفیگ فیلترشکنه. مرحله‌ی بعدی
-(اجرای واقعی xray + درخواست HTTP از طریق پروکسی) بعداً جایگزین یا
-تکمیل‌کننده‌ی این تست می‌شه.
+⚠️ این نسخه دیگر هیچ تست زنده‌بودنی (نه TCP، نه UDP) انجام نمی‌ده.
+تست TCP قبلی حذف شد چون گمراه‌کننده بود: باز بودن پورت هیچ تضمینی
+نمی‌داد که پروتکل واقعاً کار می‌کنه (مخصوصاً پشت CDN/reality که TCP
+handshake موفق می‌شه ولی خود پروکسی جواب نمی‌ده)، و false negative
+هم برای hysteria2/tuic (که UDP هستن) ایجاد می‌کرد.
 
-⚠️ محدودیت شناخته‌شده: hysteria2/hy2 و tuic روی UDP کار می‌کنن، نه TCP.
-تست TCP فعلی برای این پروتکل‌ها همیشه شکست می‌خوره (false negative).
-فعلاً این‌ها رو صرفاً بر اساس امتیاز پروتکل عبور می‌دیم، بدون تست اتصال واقعی،
-تا وقتی تست UDP اختصاصی اضافه بشه.
+نتیجه: همه‌ی کانفیگ‌های ورودی، بدون فیلتر، فقط بر اساس امتیاز پروتکل
+(reality/tls/grpc/hysteria2/tuic از QUALITY_BONUS در config.py) مرتب
+و برگردونده می‌شن. یعنی کانفیگ‌های کاملاً مرده/آفلاین هم ممکنه در خروجی
+نهایی ظاهر بشن، تا وقتی یک تست اتصال واقعی (مثلاً با xray) جایگزینش بشه.
 """
 
-import socket
-from concurrent.futures import ThreadPoolExecutor, as_completed
-
 import config
-from utils import get_host, get_port, decode_vmess
-
-UDP_PROTOCOLS = ("hysteria2://", "hy2://", "tuic://")
-
-
-def _check_tcp_alive(host: str, port: int) -> bool:
-    """با یه اتصال TCP ساده بررسی می‌کنه سرور بالاست یا نه."""
-    if not host or not port:
-        return False
-    try:
-        with socket.create_connection((host, port), timeout=config.PING_TIMEOUT):
-            return True
-    except Exception:
-        return False
+from utils import decode_vmess
 
 
 def _detect_features(line: str) -> set[str]:
@@ -68,31 +53,10 @@ def _score(features: set[str]) -> int:
 
 def check_quality(configs: list[str]) -> list[tuple[str, int]]:
     """
-    هر کانفیگ رو تست می‌کنه و در صورت زنده بودن، همراه با امتیاز کیفیتش
-    برمی‌گردونه: [(config_line, score), ...] — مرتب‌شده نزولی بر اساس امتیاز.
-
-    برای پروتکل‌های UDP-based (hysteria2/tuic) چون تست TCP معنی نداره،
-    فعلاً بدون تست اتصال، فقط بر اساس امتیاز عبور داده می‌شن.
+    هر کانفیگ رو صرفاً بر اساس ویژگی‌هاش امتیازدهی می‌کنه، بدون هیچ تست
+    اتصالی. خروجی: [(config_line, score), ...] — مرتب‌شده نزولی بر اساس
+    امتیاز. هیچ کانفیگی در این مرحله رد نمی‌شه.
     """
-    results: list[tuple[str, int]] = []
-
-    tcp_candidates = [c for c in configs if not c.startswith(UDP_PROTOCOLS)]
-    udp_candidates = [c for c in configs if c.startswith(UDP_PROTOCOLS)]
-
-    with ThreadPoolExecutor(max_workers=config.PING_WORKERS) as executor:
-        futures = {}
-        for line in tcp_candidates:
-            host, port = get_host(line), get_port(line)
-            futures[executor.submit(_check_tcp_alive, host, port)] = line
-        for future in as_completed(futures):
-            line = futures[future]
-            if future.result():
-                score = _score(_detect_features(line))
-                results.append((line, score))
-
-    for line in udp_candidates:
-        score = _score(_detect_features(line))
-        results.append((line, score))
-
+    results = [(line, _score(_detect_features(line))) for line in configs]
     results.sort(key=lambda item: item[1], reverse=True)
     return results
