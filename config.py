@@ -117,6 +117,8 @@ OUTPUT_FILES = {
 # ---------------------------------------------------------------------------
 GEOIP_CACHE_FILE = "geoip_cache.json"
 GEOIP_CACHE_TTL_DAYS = 7  # بعد از این مدت، IP دوباره چک می‌شه
+GEOIP_BATCH_DELAY_SECONDS = 4  # تاخیر بین batch های ip-api برای رعایت rate-limit
+GEOIP_FALLBACK_WORKERS = 8      # تعداد thread هم‌زمان برای fallback به ipwho.is
 
 # ---------------------------------------------------------------------------
 # تاریخچه‌ی کانفیگ‌های منتشرشده (برای جلوگیری از تکرار عین همان کانفیگ
