@@ -10,11 +10,10 @@ main.py
     checker.py    -> تست زنده بودن و کیفیت سرورها
     geoip.py      -> تشخیص کشور سرورها (با کش)
     formatter.py  -> تغییر نام کانفیگ‌ها + دسته‌بندی کشوری + نوشتن خروجی‌ها
-
-هر تابعی که این فایل صداش می‌زنه، فعلاً توی ماژول مربوطه وجود نداره
-و قدم‌به‌قدم توی مراحل بعدی اضافه می‌شه. اجرای مستقیم این فایل قبل از
-کامل شدن بقیه ماژول‌ها با خطای ImportError مواجه می‌شه؛ این طبیعیه.
 """
+
+import json
+import os
 
 import config
 from telegram import fetch_from_telegram
@@ -40,6 +39,38 @@ def collect_raw_configs() -> list[str]:
     return configs
 
 
+def load_published_history() -> set[str]:
+    """
+    کانفیگ‌های منتشرشده در اجرای قبلی رو می‌خونه (اگه فایلی وجود داشته باشه).
+    فقط آخرین اجرا نگه داشته می‌شه؛ نبودن فایل یا خراب بودنش خطا محسوب نمی‌شه
+    (مثلاً اولین اجرای پروژه) و صرفاً یک ست خالی برمی‌گردونه.
+    """
+    if not os.path.exists(config.PUBLISHED_HISTORY_FILE):
+        return set()
+    try:
+        with open(config.PUBLISHED_HISTORY_FILE, "r", encoding="utf-8") as f:
+            return set(json.load(f))
+    except (json.JSONDecodeError, OSError):
+        print("⚠️ فایل تاریخچه‌ی کانفیگ‌های منتشرشده خراب بود؛ نادیده گرفته شد.")
+        return set()
+
+
+def filter_previously_published(
+    cleaned_configs: list[str], history: set[str]
+) -> list[str]:
+    """
+    کانفیگ‌هایی که کل رشته‌شون دقیقاً با اجرای قبلی یکی باشه رو حذف می‌کنه
+    (فیچر تنوع تاریخچه)، تا در دو اجرای پیاپی عین همون کانفیگ تکرار نشه.
+    """
+    if not history:
+        return cleaned_configs
+    filtered = [c for c in cleaned_configs if c not in history]
+    removed = len(cleaned_configs) - len(filtered)
+    if removed:
+        print(f"🔁 {removed} کانفیگ چون عیناً در اجرای قبلی منتشر شده بود حذف شد.")
+    return filtered
+
+
 def main():
     raw_configs = collect_raw_configs()
     if not raw_configs:
@@ -48,6 +79,9 @@ def main():
 
     cleaned_configs = clean_and_dedupe(raw_configs)
     print(f"🧹 بعد از پاک‌سازی: {len(cleaned_configs)} کانفیگ یکتا.")
+
+    history = load_published_history()
+    cleaned_configs = filter_previously_published(cleaned_configs, history)
 
     candidate_pool = cleaned_configs[: config.RAW_POOL_SIZE]
     print(f"🔎 در حال تست کیفیت {len(candidate_pool)} کانفیگ (از سقف {config.RAW_POOL_SIZE}).")
