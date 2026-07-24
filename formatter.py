@@ -5,9 +5,10 @@ formatter.py
     2. بر اساس کشور دسته‌بندی می‌کنه (کشورهای اختصاصی جدا، بقیه زیر All)
     3. سقف تعداد هر فایل رو اعمال می‌کنه (بر اساس امتیاز، بهترین‌ها اول)
     4. کانفیگ پین‌شده رو همیشه ردیف اول هر فایل می‌ذاره
-    5. همه‌ی فایل‌های خروجی رو می‌نویسه
+    5. همه‌ی فایل‌های خروجی رو به‌صورت base64 می‌نویسه (فرمت استاندارد Subscription)
 """
 
+import base64
 import os
 from urllib.parse import quote
 
@@ -58,6 +59,8 @@ def _build_file_content(entries: list[tuple[str, int, str]], limit: int) -> str:
     """
     entries رو بر اساس امتیاز مرتب می‌کنه، به سقف limit محدود می‌کنه،
     اسم برند رو اعمال می‌کنه و کانفیگ پین‌شده رو ردیف اول می‌ذاره.
+    خروجی، متن خامِ کانفیگ‌ها (هر خط یک کانفیگ) هست؛ base64 کردنش
+    وظیفه‌ی تابع build_outputs هست، نه این تابع.
     """
     sorted_entries = sorted(entries, key=lambda e: e[1], reverse=True)[:limit]
 
@@ -73,6 +76,18 @@ def _build_file_content(entries: list[tuple[str, int, str]], limit: int) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _write_subscription_file(path: str, raw_content: str) -> None:
+    """
+    محتوای خام (لیست کانفیگ‌ها، هر خط یکی) رو به فرمت استاندارد
+    Subscription (کل فایل base64-encode شده) تبدیل و ذخیره می‌کنه.
+    بدون این مرحله، اکثر کلاینت‌ها (V2rayNG، NekoBox، Clash و...)
+    قادر به پارس کردن لینک ساب نیستن.
+    """
+    encoded = base64.b64encode(raw_content.encode("utf-8")).decode("utf-8")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(encoded)
+
+
 def build_outputs(geo_configs: list[tuple[str, int, str, str]]) -> None:
     """فایل‌های خروجی نهایی (RVVPN_All + یکی به‌ازای هر کشور اختصاصی) رو می‌سازه."""
     os.makedirs(config.OUTPUT_DIR, exist_ok=True)
@@ -83,15 +98,13 @@ def build_outputs(geo_configs: list[tuple[str, int, str, str]]) -> None:
     all_entries = [entry for entries in groups.values() for entry in entries]
     all_content = _build_file_content(all_entries, config.MAX_CONFIGS_ALL)
     all_path = os.path.join(config.OUTPUT_DIR, config.OUTPUT_FILES["all"])
-    with open(all_path, "w", encoding="utf-8") as f:
-        f.write(all_content)
-    print(f"📝 {all_path}: {len(all_content.splitlines())} خط نوشته شد.")
+    _write_subscription_file(all_path, all_content)
+    print(f"📝 {all_path}: {len(all_content.splitlines())} کانفیگ نوشته شد (base64).")
 
     # فایل‌های کشوری اختصاصی
     for code, country_name in config.DEDICATED_COUNTRIES.items():
         entries = groups.get(code, [])
         content = _build_file_content(entries, config.MAX_CONFIGS_PER_COUNTRY)
         path = os.path.join(config.OUTPUT_DIR, f"RVVPN_{country_name.replace(' ', '')}")
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(content)
-        print(f"📝 {path}: {len(content.splitlines())} خط نوشته شد.")
+        _write_subscription_file(path, content)
+        print(f"📝 {path}: {len(content.splitlines())} کانفیگ نوشته شد (base64).")
