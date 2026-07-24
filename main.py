@@ -49,7 +49,10 @@ def main():
     cleaned_configs = clean_and_dedupe(raw_configs)
     print(f"🧹 بعد از پاک‌سازی: {len(cleaned_configs)} کانفیگ یکتا.")
 
-    scored_configs = check_quality(cleaned_configs)
+    candidate_pool = cleaned_configs[: config.RAW_POOL_SIZE]
+    print(f"🔎 در حال تست کیفیت {len(candidate_pool)} کانفیگ (از سقف {config.RAW_POOL_SIZE}).")
+
+    scored_configs = check_quality(candidate_pool)
     print(f"💚 {len(scored_configs)} کانفیگ سالم و امتیازدهی‌شده باقی موند.")
 
     if not scored_configs:
@@ -64,4 +67,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
