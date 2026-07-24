@@ -9,6 +9,7 @@ formatter.py
 """
 
 import base64
+import json
 import os
 from urllib.parse import quote
 
@@ -55,16 +56,20 @@ def _group_by_country(
     return groups
 
 
-def _build_file_content(entries: list[tuple[str, int, str]], limit: int) -> str:
+def _build_file_content(
+    entries: list[tuple[str, int, str]], limit: int
+) -> tuple[str, list[str]]:
     """
     entries رو بر اساس امتیاز مرتب می‌کنه، به سقف limit محدود می‌کنه،
     اسم برند رو اعمال می‌کنه و کانفیگ پین‌شده رو ردیف اول می‌ذاره.
-    خروجی، متن خامِ کانفیگ‌ها (هر خط یک کانفیگ) هست؛ base64 کردنش
-    وظیفه‌ی تابع build_outputs هست، نه این تابع.
+    خروجی: (متن خامِ کانفیگ‌ها برای نوشتن در فایل, لیست raw config های
+    اصلی/پیش از rename که در این فایل استفاده شدن — برای ثبت در تاریخچه).
+    base64 کردن وظیفه‌ی تابع build_outputs هست، نه این تابع.
     """
     sorted_entries = sorted(entries, key=lambda e: e[1], reverse=True)[:limit]
 
     lines = [config.PINNED_NOTICE_CONFIG]
+    raw_lines_used: list[str] = []
     for line, _score, country_name in sorted_entries:
         code = next(
             (c for c, n in config.DEDICATED_COUNTRIES.items() if n == country_name),
@@ -72,8 +77,9 @@ def _build_file_content(entries: list[tuple[str, int, str]], limit: int) -> str:
         )
         flag = _flag_emoji(code) if country_name != "All" else "🌍"
         lines.append(_rename_config(line, flag, country_name))
+        raw_lines_used.append(line)
 
-    return "\n".join(lines) + "\n"
+    return "\n".join(lines) + "\n", raw_lines_used
 
 
 def _write_subscription_file(path: str, raw_content: str) -> None:
@@ -88,23 +94,40 @@ def _write_subscription_file(path: str, raw_content: str) -> None:
         f.write(encoded)
 
 
+def _save_published_history(raw_configs: set[str]) -> None:
+    """
+    راو کانفیگ‌های (پیش از rename) استفاده‌شده در این اجرا رو ذخیره می‌کنه.
+    فقط آخرین اجرا نگه داشته می‌شه؛ فایل هر بار کامل بازنویسی می‌شه، نه append.
+    این فایل توسط main.py خونده می‌شه تا از تکرار عین همون کانفیگ در اجرای
+    بعدی جلوگیری کنه.
+    """
+    with open(config.PUBLISHED_HISTORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(sorted(raw_configs), f, ensure_ascii=False, indent=2)
+
+
 def build_outputs(geo_configs: list[tuple[str, int, str, str]]) -> None:
     """فایل‌های خروجی نهایی (RVVPN_All + یکی به‌ازای هر کشور اختصاصی) رو می‌سازه."""
     os.makedirs(config.OUTPUT_DIR, exist_ok=True)
 
     groups = _group_by_country(geo_configs)
+    all_raw_used: set[str] = set()
 
     # فایل کلی: همه‌ی کانفیگ‌ها (از همه کشورها) با سقف MAX_CONFIGS_ALL
     all_entries = [entry for entries in groups.values() for entry in entries]
-    all_content = _build_file_content(all_entries, config.MAX_CONFIGS_ALL)
+    all_content, all_raw = _build_file_content(all_entries, config.MAX_CONFIGS_ALL)
     all_path = os.path.join(config.OUTPUT_DIR, config.OUTPUT_FILES["all"])
     _write_subscription_file(all_path, all_content)
+    all_raw_used.update(all_raw)
     print(f"📝 {all_path}: {len(all_content.splitlines())} کانفیگ نوشته شد (base64).")
 
     # فایل‌های کشوری اختصاصی
     for code, country_name in config.DEDICATED_COUNTRIES.items():
         entries = groups.get(code, [])
-        content = _build_file_content(entries, config.MAX_CONFIGS_PER_COUNTRY)
+        content, raw_used = _build_file_content(entries, config.MAX_CONFIGS_PER_COUNTRY)
         path = os.path.join(config.OUTPUT_DIR, f"RVVPN_{country_name.replace(' ', '')}")
         _write_subscription_file(path, content)
+        all_raw_used.update(raw_used)
         print(f"📝 {path}: {len(content.splitlines())} کانفیگ نوشته شد (base64).")
+
+    _save_published_history(all_raw_used)
+    print(f"🗂️ {len(all_raw_used)} کانفیگ در تاریخچه‌ی این اجرا ثبت شد.")
