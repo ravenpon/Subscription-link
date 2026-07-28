@@ -31,9 +31,16 @@ TELEGRAM_CHANNELS = [
     # کانال‌های اضافه‌شده در مرحله بعد
     "vpnfail_v2ray", "v2raycollector", "surfboardv2ray", "daily_configs",
     "invoProxy", "GalaxyMVPN", "ConfigWireguard", "ConfigV2rayNG",
-    "keyline_vless", "V2RayRootFree", "nvpnir", "VEGAAS_VPN", "V2boxnet",
+  "keyline_vless", "V2RayRootFree", "nvpnir", "VEGAAS_VPN", "V2boxnet",
+    # دسته‌ی دوم
+    "iproxy_Meli", "Diamond_grooup", "Confing_hupp", "proxyy_1404",
+    "letsproxys1", "letsproxys2", "PROXIS_FREE", "chatnakonn", "VpnQavi",
+    "configraygan_group", "qrmvasl", "LonUp_M", "v2ray_dalghak",
+    "ShadowProxy66", "confiiing_chanel", "V2ray_official", "Kingnighttt",
+    "GGVPNHOP", "Spotify_Porteghali", "Mrshahabx", "sorenab2",
+    "v2rayngvpn", "Outline_Vpn", "configmax", "DarkHub_VPN", "NetAccount",
+    "ProxyDotNet", "injector_1401Ehi", "Farsroid_Club",
 ]
-
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
 # ---------------------------------------------------------------------------
