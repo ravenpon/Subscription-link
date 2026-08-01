@@ -42,6 +42,7 @@ TELEGRAM_CHANNELS = [
     "ProxyDotNet", "injector_1401Ehi", "Farsroid_Club",
     "outlinee_vpn",
     "EricVPN",
+    "v2ray_youtube_group",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
