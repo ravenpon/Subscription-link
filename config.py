@@ -49,6 +49,7 @@ TELEGRAM_CHANNELS = [
     "OutlineVpnPremium",
     "sublinkAndroid",
     "outlinekeys_free",
+    "FreeConfigV2ray_1",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
