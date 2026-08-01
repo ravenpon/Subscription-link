@@ -41,6 +41,7 @@ TELEGRAM_CHANNELS = [
     "v2rayngvpn", "Outline_Vpn", "configmax", "DarkHub_VPN", "NetAccount",
     "ProxyDotNet", "injector_1401Ehi", "Farsroid_Club",
     "outlinee_vpn",
+    "EricVPN",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
