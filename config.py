@@ -43,6 +43,7 @@ TELEGRAM_CHANNELS = [
     "outlinee_vpn",
     "EricVPN",
     "v2ray_youtube_group",
+    "v2ray_outlineir",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
