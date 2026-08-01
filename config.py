@@ -47,6 +47,7 @@ TELEGRAM_CHANNELS = [
     "v2rayfresh",
     "proxyconfigss",
     "OutlineVpnPremium",
+    "sublinkAndroid",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
