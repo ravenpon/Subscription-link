@@ -44,6 +44,7 @@ TELEGRAM_CHANNELS = [
     "EricVPN",
     "v2ray_youtube_group",
     "v2ray_outlineir",
+    "v2rayfresh",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
