@@ -62,6 +62,7 @@ TELEGRAM_CHANNELS = [
     "lenstablegh",
     "VIPVPNAMIR1",
     "hysteria2_panel",
+    "hysteria_github",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
