@@ -52,6 +52,7 @@ TELEGRAM_CHANNELS = [
     "FreeConfigV2ray_1",
     "ShadowsocksM",
     "TrojanL",
+    "ShadowSocks_channel",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
