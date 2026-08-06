@@ -53,6 +53,7 @@ TELEGRAM_CHANNELS = [
     "ShadowsocksM",
     "TrojanL",
     "ShadowSocks_channel",
+    "ShadowSocksT",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
