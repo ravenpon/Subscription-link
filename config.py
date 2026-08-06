@@ -59,6 +59,7 @@ TELEGRAM_CHANNELS = [
     "v2config2",
     "OutlineVpnOfficial",
     "bega_raftimmmm",
+    "lenstablegh",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
