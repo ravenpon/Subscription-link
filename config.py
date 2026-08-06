@@ -58,6 +58,7 @@ TELEGRAM_CHANNELS = [
     "Masyakata",
     "v2config2",
     "OutlineVpnOfficial",
+    "bega_raftimmmm",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
