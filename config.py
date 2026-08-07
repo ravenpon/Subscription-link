@@ -64,6 +64,7 @@ TELEGRAM_CHANNELS = [
     "hysteria2_panel",
     "hysteria_github",
     "superconfig2",
+    "vpn_Click",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
