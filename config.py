@@ -66,6 +66,7 @@ TELEGRAM_CHANNELS = [
     "superconfig2",
     "vpn_Click",
     "shadowsocks0",
+    "vmessiraan",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
