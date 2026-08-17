@@ -69,6 +69,7 @@ TELEGRAM_CHANNELS = [
     "vmessiraan",
     "AzadNet",
     "vaslshavim",
+    "V2rayN5",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
