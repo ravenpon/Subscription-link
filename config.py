@@ -71,6 +71,7 @@ TELEGRAM_CHANNELS = [
     "vaslshavim",
     "V2rayN5",
     "Ghostray_NG",
+    "WhatsAppProxyd",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
