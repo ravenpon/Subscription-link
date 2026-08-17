@@ -72,6 +72,7 @@ TELEGRAM_CHANNELS = [
     "V2rayN5",
     "Ghostray_NG",
     "WhatsAppProxyd",
+    "v2ray_youtube",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
