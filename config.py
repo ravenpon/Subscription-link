@@ -73,6 +73,7 @@ TELEGRAM_CHANNELS = [
     "Ghostray_NG",
     "WhatsAppProxyd",
     "v2ray_youtube",
+    "net_resan",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
