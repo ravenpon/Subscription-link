@@ -75,6 +75,7 @@ TELEGRAM_CHANNELS = [
     "v2ray_youtube",
     "net_resan",
     "v2RayTunVPN",
+    "V2ray686",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
