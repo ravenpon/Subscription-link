@@ -78,6 +78,7 @@ TELEGRAM_CHANNELS = [
     "V2ray686",
     "bardiav2ray",
     "MEHRAN_VPN",
+    "Broz_time",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
