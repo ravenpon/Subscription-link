@@ -80,6 +80,7 @@ TELEGRAM_CHANNELS = [
     "MEHRAN_VPN",
     "Broz_time",
     "EquMind",
+    "dailyv2rayCF",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
