@@ -81,6 +81,7 @@ TELEGRAM_CHANNELS = [
     "Broz_time",
     "EquMind",
     "dailyv2rayCF",
+    "divatoz",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
