@@ -83,6 +83,7 @@ TELEGRAM_CHANNELS = [
     "dailyv2rayCF",
     "divatoz",
     "polemoftie",
+    "azadi55",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
