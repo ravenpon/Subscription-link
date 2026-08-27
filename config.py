@@ -89,6 +89,7 @@ TELEGRAM_CHANNELS = [
     "MraPanel2",
     "QuattroVPN_NEWS",
     "outlines_vpn",
+    "V2ProxyIR",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
