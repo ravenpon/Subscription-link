@@ -91,6 +91,7 @@ TELEGRAM_CHANNELS = [
     "outlines_vpn",
     "V2ProxyIR",
     "ConfigeVPN",
+    "npvfreeall",
 ]
 MESSAGES_PER_CHANNEL = 80  # چند پیام آخر هر کانال بررسی بشه
 
